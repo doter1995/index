@@ -1,0 +1,17 @@
+.Container {
+  display: flex;
+  flex-direction: column;
+
+  :global {
+    .container {
+      display: flex;
+      min-height: 100vh;
+      .content {
+        padding: 24px;
+        flex: 1;
+        display: flex;
+      }
+    }
+  }
+
+}
