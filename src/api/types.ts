@@ -3,6 +3,7 @@ export interface FileReq {
     path: string;
     content: string;
 }
+
 export interface File {
     id: string;
     name: string;

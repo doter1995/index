@@ -29,7 +29,7 @@ const menusRouters: MenuWithRoute[] = [
             }, {
                 title: "编辑",
                 icon: <MailOutlined/>,
-                path: "/blog/editor",
+                path: "/blog/editor/:filePath",
                 component: BlogEditor
             }, {
                 title: "导出",

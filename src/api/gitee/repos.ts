@@ -6,7 +6,7 @@ const SHA_MAP = new Map<string, string>()
 
 export async function getFile(filePath: string): Promise<File> {
     const {owner, repo, access_token, branch} = getBaseInfo();
-    const url = `${BasePath}/repos/${owner}/${repo}/contents${filePath}?ref=${branch}&access_token=${access_token}`
+    const url = `${BasePath}/repos/${owner}/${repo}/contents/${filePath}?ref=${branch}&access_token=${access_token}`
     const res = await fetch(url)
     const data = await res.json()
     if (!data.sha) {
@@ -24,7 +24,7 @@ export async function getFile(filePath: string): Promise<File> {
 
 export async function createFile(fileReq: FileReq): Promise<File> {
     const {owner, repo, access_token, branch} = getBaseInfo();
-    const url = `${BasePath}/repos/${owner}/${repo}/contents${fileReq.path}`
+    const url = `${BasePath}/repos/${owner}/${repo}/contents/${fileReq.path}`
     const form = new FormData()
     form.set("access_token", access_token)
     form.set("content", encode(fileReq.content))
@@ -34,12 +34,11 @@ export async function createFile(fileReq: FileReq): Promise<File> {
         method: "POST",
         body: form
     })
-    if (res.status != 201) {
+    if (res.status !== 201) {
         console.error("创建失败！")
         throw new Error("创建失败！")
     }
     const {content} = await res.json()
-    debugger;
     return {
         createdDate: Date.now(),
         updatedDate: Date.now(),
@@ -51,9 +50,9 @@ export async function createFile(fileReq: FileReq): Promise<File> {
     };
 }
 
-export async function updateFile(fileReq: FileReq): Promise<boolean> {
+export async function updateFile(fileReq: FileReq): Promise<File> {
     const {owner, repo, access_token, branch} = getBaseInfo();
-    const url = `${BasePath}/repos/${owner}/${repo}/contents${fileReq.path}`;
+    const url = `${BasePath}/repos/${owner}/${repo}/contents/${fileReq.path}`;
     const sha = SHA_MAP.get(fileReq.path)
     if (!sha) {
         throw Error("sha not found!")
@@ -68,11 +67,18 @@ export async function updateFile(fileReq: FileReq): Promise<boolean> {
         method: "PUT",
         body: form
     })
-    if (res.status != 200) {
-        console.error("请求失败！")
-        return false
+    if (res.status !== 200) {
+        throw Error("更新失败！")
     }
     const {content} = await res.json()
-    console.log(content)
-    return true;
+    SHA_MAP.set(fileReq.path, content.sha)
+    return {
+        createdDate: Date.now(),
+        updatedDate: Date.now(),
+        name: fileReq.name,
+        content: fileReq.content,
+        id: content.sha,
+        path: content.path,
+        size: content.size
+    };
 }

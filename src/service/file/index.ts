@@ -18,7 +18,7 @@ export async function createFile(file: FileReq): Promise<File> {
     return await createFileByGitee(file);
 }
 
-export async function updateFile(file: FileReq): Promise<boolean> {
+export async function updateFile(file: FileReq): Promise<File> {
     return await updateFileByGitee(file);
 }
 
